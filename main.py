@@ -1,15 +1,11 @@
 import discord
 from discord.ext import commands
 import json
-import random
 import asyncio
 import os
 
 with open("config.json", 'r') as file:
 	config = json.load(file)
-
-with open("dictionary.txt", 'r') as file:
-	dictionary = file.read().split("\n")
 
 intents = discord.Intents.default()
 
