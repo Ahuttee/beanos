@@ -4,8 +4,15 @@ import json
 import asyncio
 import os
 
-with open("config.json", 'r') as file:
-	config = json.load(file)
+# For heroku server
+if 'HEROKU' in os.environ:
+	config = {
+		"prefix": os.environ['PREFIX'],
+		"token": os.environ['TOKEN']
+	}
+else:
+	with open("config.json", 'r') as file:
+		config = json.load(file)
 
 intents = discord.Intents.default()
 
