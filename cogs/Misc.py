@@ -7,23 +7,46 @@ import aiohttp
 with open("dictionary.txt", 'r') as f:
 	dictionary = f.read().split('\n')
 
-class CatView(discord.ui.View):
-	def __init__(self, embed):
+
+
+class ImageView(discord.ui.View):
+	def __init__(self, embed, site_url):
 		super().__init__()
 		self.embed = embed
+		self.site_url = site_url
 	
 	@discord.ui.button(label="NEW", style=discord.ButtonStyle.green)
 	async def new(self, inter: discord.Interaction, button: discord.ui.Button):
 		async with aiohttp.ClientSession() as session:
-			async with session.get("https://api.thecatapi.com/v1/images/search") as response:
+			async with session.get(self.site_url) as response:
 				if response.status == 200:
 					data = await response.json()
-					self.url = data[0]["url"]
-					self.embed.set_image(url=self.url)
-					await inter.response.edit_message(embed=self.embed, view=self)
+					await self.new_image(inter, data)
 				else:
-					inter.response.send_message("Unable to get a new picture", ephemeral=True)
+					await inter.response.send_message("Unable to get a new picture", ephemeral=True)
+	async def set_image(self, inter, data):
+		pass
 
+class CatView(ImageView):
+	def __init__(self, embed, site_url):
+		super().__init__(embed, site_url)
+		
+	async def new_image(self, inter, data):
+		url = data[0]["url"]
+		self.embed.set_image(url=url)
+		await inter.response.edit_message(embed=self.embed, view=self)
+		
+
+class DogView(ImageView):
+	def __init__(self, embed, site_url):
+		super().__init__(embed, site_url)
+		
+	async def new_image(self, inter, data):
+		url = data["message"]
+		self.embed.set_image(url=url)
+		await inter.response.edit_message(embed=self.embed, view=self)
+	
+					
 class Misc(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
@@ -56,24 +79,50 @@ class Misc(commands.Cog):
 
 	@commands.hybrid_command(name="cat", aliases=['neko'])
 	async def cat(self, ctx):
+		site_url = "https://api.thecatapi.com/v1/images/search"
 		async with aiohttp.ClientSession() as session:
-			async with session.get("https://api.thecatapi.com/v1/images/search") as response:
+			async with session.get(site_url) as response:
 				if response.status == 200:
 					data = await response.json()
 					url = data[0]["url"]
 				else:
-					ctx.send("Unable to get an image, try again later", ephemeral=True)
+					await ctx.send("Unable to get an image, try again later", ephemeral=True)
 					return
 
-		
 		embed = discord.Embed(
 			title = "c a t",
 			color = discord.Colour.random()
 		)
-		embed.set_footer(text = "thecatapi.com")
+		embed.set_footer(text = "www.thecatapi.com")
 		embed.set_image(url=url)
 		
-		view = CatView(embed)
+		view = CatView(embed, site_url)
+		msg = await ctx.send(embed=embed, view=view)
+
+		await view.wait()
+		await msg.edit(embed=embed, view=None)
+		
+		
+	@commands.hybrid_command(name="dog", aliases=['doge'])
+	async def dog(self, ctx):
+		site_url = "https://dog.ceo/api/breeds/image/random"
+		async with aiohttp.ClientSession() as session:
+			async with session.get(site_url) as response:
+				if response.status == 200:
+					data = await response.json()
+					url = data["message"]
+				else:
+					await ctx.send("Unable to get an image, try again later", ephemeral=True)
+					return
+
+		embed = discord.Embed(
+			title = "doge",
+			color = discord.Colour.random()
+		)
+		embed.set_footer(text = "www.dog.ceo")
+		embed.set_image(url=url)
+		
+		view = DogView(embed, site_url)
 		msg = await ctx.send(embed=embed, view=view)
 
 		await view.wait()
