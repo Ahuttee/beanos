@@ -3,6 +3,9 @@ from discord.ext import commands
 import json
 import asyncio
 import os
+import logging
+
+log_handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
 
 # For heroku server
 if 'HEROKU' in os.environ:
@@ -26,7 +29,7 @@ async def on_ready():
 	await bot.tree.sync()
 
 	activity = discord.Streaming(
-		name = "with Quandale Dingle",
+		name = "",
 		url = "https://www.twitch.tv/quandaledingle1235"
 	)
 	await bot.change_presence(activity=activity)
@@ -40,4 +43,4 @@ async def load_cogs():
 			print("Loaded extension", extension)
 
 asyncio.run(load_cogs())
-bot.run(config['token'])
+bot.run(config['token'], log_handler=log_handler, log_level=logging.DEBUG)
