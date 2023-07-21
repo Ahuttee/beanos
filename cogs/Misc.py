@@ -8,12 +8,12 @@ with open("dictionary.txt", 'r') as f:
 	dictionary = f.read().split('\n')
 
 
-
 class ImageView(discord.ui.View):
 	def __init__(self, embed, site_url):
 		super().__init__()
 		self.embed = embed
 		self.site_url = site_url
+		self.timeout = 120.0
 	
 	@discord.ui.button(label="NEW", style=discord.ButtonStyle.green)
 	async def new(self, inter: discord.Interaction, button: discord.ui.Button):
@@ -24,8 +24,15 @@ class ImageView(discord.ui.View):
 					await self.new_image(inter, data)
 				else:
 					await inter.response.send_message("Unable to get a new picture", ephemeral=True)
-	async def set_image(self, inter, data):
+					
+	async def new_image(self, inter, data):
 		pass
+		
+	async def on_timeout(self):
+		self.clear_items()
+		await self.message.edit(view=self)
+			
+			
 
 class CatView(ImageView):
 	def __init__(self, embed, site_url):
@@ -97,10 +104,10 @@ class Misc(commands.Cog):
 		embed.set_image(url=url)
 		
 		view = CatView(embed, site_url)
-		msg = await ctx.send(embed=embed, view=view)
+		view.message = await ctx.send(embed=embed, view=view)
 
-		await view.wait()
-		await msg.edit(embed=embed, view=None)
+		#await view.wait()
+		#await msg.edit(embed=embed, view=None)
 		
 		
 	@commands.hybrid_command(name="dog", aliases=['doge'])
@@ -123,10 +130,10 @@ class Misc(commands.Cog):
 		embed.set_image(url=url)
 		
 		view = DogView(embed, site_url)
-		msg = await ctx.send(embed=embed, view=view)
+		view.message = await ctx.send(embed=embed, view=view)
 
-		await view.wait()
-		await msg.edit(embed=embed, view=None)
+	#	await view.wait()
+	#	await msg.edit(embed=embed, view=None)
 			
 
 
