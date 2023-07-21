@@ -1,6 +1,9 @@
 # Config file for discord bot
 config.json
 
+pm2.json
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
