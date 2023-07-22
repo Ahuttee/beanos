@@ -21,10 +21,6 @@ bot = commands.Bot(
 	intents=intents
 )
 
-@bot.event
-async def on_ready():
-	await bot.tree.sync()
-	print("Bot is online")
 
 @tasks.loop(minutes=5)
 async def update_status():
@@ -34,6 +30,13 @@ async def update_status():
 	)
     await bot.change_presence(activity=activity)
     
+
+
+@bot.event
+async def on_ready():
+	await bot.tree.sync()
+	print("Bot is online")
+	await update_status.start()
 
 async def load_cogs():
 	for file in os.listdir('./cogs'):
