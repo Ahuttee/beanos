@@ -135,9 +135,9 @@ class Misc(commands.Cog):
     #   await view.wait()
     #   await msg.edit(embed=embed, view=None)
             
-    @app_commands.command(name="ping")
-     async def ping(inter: discord.Interaction):
-         await inter.send(f"Pong! {int(self.bot.latency * 1000)}ms")
+    @app_commands.command(name="ping", description="Send the bots latency in milliseconds")
+    async def ping(self, inter: discord.Interaction):
+         await inter.response.send_message(f"Pong! {int(self.bot.latency * 1000)}ms")
             
 
 
