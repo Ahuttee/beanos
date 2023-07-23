@@ -3,6 +3,9 @@ config.json
 
 pm2.json
 
+# Replit config files
+.replit
+.replit.nix
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
