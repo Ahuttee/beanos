@@ -12,6 +12,7 @@ status_msg = cycle( ["with Shaq", "with Kai Cenat", "with Quandale Dingle", "wit
 log_handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
 
 intents = discord.Intents.default()
+intents.message_content = True
 
 with open("config.json", 'r') as file:
         config = json.load(file)
