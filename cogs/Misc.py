@@ -7,7 +7,6 @@ import aiohttp
 with open("dictionary.txt", 'r') as f:
     dictionary = f.read().split('\n')
 
-
 class ImageView(discord.ui.View):
     def __init__(self, embed, site_url):
         super().__init__()
@@ -140,9 +139,10 @@ class Misc(commands.Cog):
          await inter.response.send_message(f"Pong! {int(self.bot.latency * 1000)}ms")
             
 
-
-        
-
+    @app_commands.command(name="servers", description="The total number of servers the bot is currently in")
+    async def servers(self, inter: discord.Interaction):
+      await inter.response.send_message(f"I am currently on **{len(self.bot.guilds)}** servers")
+      
 async def setup(bot):
     await bot.add_cog(Misc(bot))
 
