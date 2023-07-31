@@ -1,4 +1,5 @@
 {
 	"prefix": "$",
+	"giphy_api_key": "",
 	"token": ""
 }
