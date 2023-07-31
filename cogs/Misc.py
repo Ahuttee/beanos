@@ -3,6 +3,7 @@ from discord.ext import commands
 from discord import app_commands
 import random
 import aiohttp
+from utils import giphy
 
 with open("dictionary.txt", 'r') as f:
     dictionary = f.read().split('\n')
@@ -141,7 +142,21 @@ class Misc(commands.Cog):
 
     @app_commands.command(name="servers", description="The total number of servers the bot is currently in")
     async def servers(self, inter: discord.Interaction):
-      await inter.response.send_message(f"I am currently on **{len(self.bot.guilds)}** servers")
+        await inter.response.send_message(f"I am currently on **{len(self.bot.guilds)}** servers")
+      
+    @app_commands.command(name="slap", description="Slap someone")
+    async def slap(self, inter: discord.Interaction, member: discord.Member):
+         response = await giphy.search("slap", limit=20)
+         gif = random.choice(response["data"])
+         await inter.response.send_message(f"You **slapped** {member.display_name}!")
+         await inter.channel.send(f"{gif['url']}")
+          
+    @app_commands.command(name="giphy", description="Search GIFs from Giphy")
+    async def search_giphy(self, inter: discord.Interaction, *, search: str):
+        response = await giphy.search(search, limit=1)
+        await inter.response.send_message(response["data"][0]["url"])
+          
+          
       
 async def setup(bot):
     await bot.add_cog(Misc(bot))
